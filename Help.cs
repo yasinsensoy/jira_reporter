@@ -4,7 +4,7 @@
     {
         public static Response getResponse(string url)
         {
-
+            return new Response();
         }
     }
 }
