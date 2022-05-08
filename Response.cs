@@ -2,13 +2,13 @@
 {
     public class Response
     {
-        private string sourceCode;
+        private readonly string sourceCode;
 
         public Response()
         {
-
+            
         }
 
-        public string SourceCode { get => sourceCode; set => sourceCode = value; }
+        public string SourceCode { get => sourceCode;}
     }
 }
