@@ -1,4 +1,8 @@
-﻿using System.Net;
+﻿using Newtonsoft.Json.Linq;
+using System;
+using System.IO;
+using System.Net;
+using System.Text;
 
 namespace jira_reporter
 {
@@ -6,57 +10,65 @@ namespace jira_reporter
     {
         public static Help instance => new Help();
 
-        public Response getResponse(string url)
+        public Response getResponse(string url, RequestOptions options = default)
         {
-            return new Response();
-        }
-
-        public Response getResponse(string url, string method = WebRequestMethods.Http.Get)
-        {
-            return new Response();
-        }
-
-        public static string KaynakKoduAl(string url, string method = WebRequestMethods.Http.Get, string postdegeri = "", string posttype = "", CookieCollection cookie = null, WebHeaderCollection header = null, bool otoyonlendir = true)
-        {
-            lock (kitle)
+            Response res = new Response();
+            try
             {
-                try
-                {
-                    HttpWebRequest request = WebRequest.CreateHttp(url);
-                    request.CookieContainer = new CookieContainer();
-                    if (!(cookie is null))
-                        request.CookieContainer.Add(cookie);
-                    request.Accept = "*/*";
-                    request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36";
-                    request.Referer = url;
-                    request.Method = method;
-                    if (Proxy != "")
-                        request.Proxy = new WebProxy(Proxy, true);
-                    request.AllowAutoRedirect = false;
-                    if (!(header is null))
-                        request.Headers.Add(header);
-                    if (method == WebRequestMethods.Http.Post && postdegeri != "")
-                    {
-                        byte[] p = Encoding.UTF8.GetBytes(postdegeri);
-                        if (posttype == "")
-                            posttype = "application/x-www-form-urlencoded; charset=UTF-8";
-                        request.ContentType = posttype;
-                        request.ContentLength = p.Length;
-                        Stream stream = request.GetRequestStream();
-                        stream.Write(p, 0, p.Length);
-                        stream.Close();
-                    }
-                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                    if (!(cookie is null))
-                        cookie.Add(response.Cookies);
-                    string source = new StreamReader(response.GetResponseStream()).ReadToEnd();
-                    response.Close();
-                    return source;
-                }
-                catch (Exception ex)
-                {
-                    return ex.Message;
-                }
+                HttpWebRequest request = createRequest(url, options);
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                res.SuccessRes = response;
+                response.Close();
+            }
+            catch (WebException ex)
+            {
+                res.WebException = ex;
+                ex.Response.Close();
+            }
+            catch (Exception ex)
+            {
+                res.Error = ex;
+            }
+            return res;
+        }
+
+        private HttpWebRequest createRequest(string url, RequestOptions options)
+        {
+            HttpWebRequest request = WebRequest.CreateHttp(url);
+            request.CookieContainer = new CookieContainer();
+            request.Accept = "*/*";
+            request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36";
+            request.Referer = url;
+            request.Method = options.Method;
+            if (options.Cookie != null)
+                request.CookieContainer.Add(options.Cookie);
+            if (options.Header != null)
+                request.Headers.Add(options.Header);
+            if (options.Method == WebRequestMethods.Http.Post && options.Post != "")
+                setPost(request, options);
+            return request;
+        }
+
+        private void setPost(HttpWebRequest request, RequestOptions options)
+        {
+            byte[] p = Encoding.UTF8.GetBytes(options.Post);
+            request.ContentType = options.PostType;
+            request.ContentLength = p.Length;
+            Stream stream = request.GetRequestStream();
+            stream.Write(p, 0, p.Length);
+            stream.Close();
+        }
+
+        public bool isJson(string value)
+        {
+            try
+            {
+                JToken.Parse(value);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
     }

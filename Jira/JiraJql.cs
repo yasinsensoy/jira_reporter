@@ -1,29 +1,24 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace jira_reporter
 {
     public class JiraJql
     {
         private string expand;
-        private List<JiraIssues> issues;
+        private List<JiraIssue> issues;
         private long maxResults;
         private long startAt;
         private long total;
 
         public JiraJql()
         {
-
         }
 
         [JsonProperty("expand")]
         public string Expand { get => expand; set => expand = value; }
         [JsonProperty("issues")]
-        public List<JiraIssues> Issues { get => issues; set => issues = value; }
+        public List<JiraIssue> Issues { get => issues; set => issues = value; }
         [JsonProperty("maxResults")]
         public long MaxResults { get => maxResults; set => maxResults = value; }
         [JsonProperty("startAt")]

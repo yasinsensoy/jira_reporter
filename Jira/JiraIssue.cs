@@ -1,29 +1,23 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace jira_reporter
 {
-    public class JiraIssues
+    public class JiraIssue
     {
         private string expand;
-        private List<JiraFields> fields;
+        private JiraField fields;
         private string id;
         private string key;
         private string self;
 
-        public JiraIssues()
+        public JiraIssue()
         {
-
         }
 
         [JsonProperty("expand")]
         public string Expand { get => expand; set => expand = value; }
         [JsonProperty("fields")]
-        public List<JiraFields> Fields { get => fields; set => fields = value; }
+        public JiraField Fields { get => fields; set => fields = value; }
         [JsonProperty("id")]
         public string Id { get => id; set => id = value; }
         [JsonProperty("key")]
