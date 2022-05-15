@@ -1,12 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Text;
 
 namespace jira_reporter
 {
     public class Response
     {
-        private string sourceCode;
+        private byte[] byteArray;
         private HttpWebResponse successRes;
         private HttpWebResponse errorRes;
         private Exception error;
@@ -14,15 +15,15 @@ namespace jira_reporter
 
         public Response()
         {
-
         }
 
-        public HttpWebResponse SuccessRes { get => successRes; set { successRes = value; sourceCode = value == null ? "" : new StreamReader(value.GetResponseStream()).ReadToEnd(); } }
-        public HttpWebResponse ErrorRes { get => errorRes; set { errorRes = value; sourceCode = value == null ? "" : new StreamReader(value.GetResponseStream()).ReadToEnd(); } }
+        public HttpWebResponse SuccessRes { get => successRes; set { successRes = value; byteArray = value.GetResponseStream().toByte(); } }
+        public HttpWebResponse ErrorRes { get => errorRes; set { errorRes = value; byteArray = value.GetResponseStream().toByte(); } }
         public Exception Error { get => error; set => error = value; }
         public WebException WebException { get => webException; set { webException = value; ErrorRes = (HttpWebResponse)webException.Response; } }
-        public string SourceCode { get => sourceCode; }
-
-        public bool isError { get => SuccessRes == null; }
+        public byte[] ByteArray { get => byteArray; set => byteArray = value; }
+        public string SourceCode => byteArray == null ? "" : Encoding.UTF8.GetString(byteArray);
+        public bool isError => SuccessRes == null;
+        public Stream Stream => new MemoryStream(byteArray);
     }
 }

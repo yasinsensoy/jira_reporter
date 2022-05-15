@@ -12,6 +12,12 @@ namespace jira_reporter
 
         public void login(string userName, string pass)
         {
+            if (string.IsNullOrEmpty(userName) && string.IsNullOrEmpty(pass))
+            {
+                auth = "";
+                user = null;
+                throw new Exception("Kullanıcı adı ve şifre boş olamaz.");
+            }
             string str = $"{userName}:{pass}";
             string authorization = $"Authorization: Basic {str.toBase64()}";
             Response res = Help.instance.getResponse($"{apiBase}myself", new RequestOptions(null, authorization));

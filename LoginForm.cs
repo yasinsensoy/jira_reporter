@@ -32,10 +32,10 @@ namespace jira_reporter
                         Config.instance.User = txtUser.Text;
                         Config.instance.Pass = txtPass.Text;
                         Config.instance.save();
-                        Close();
                     }
                     else
                         Config.instance.clear();
+                    Close();
                 }
 
             }

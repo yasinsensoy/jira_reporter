@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -18,12 +17,10 @@ namespace jira_reporter
                 HttpWebRequest request = createRequest(url, options);
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 res.SuccessRes = response;
-                response.Close();
             }
             catch (WebException ex)
             {
                 res.WebException = ex;
-                ex.Response.Close();
             }
             catch (Exception ex)
             {
@@ -57,19 +54,6 @@ namespace jira_reporter
             Stream stream = request.GetRequestStream();
             stream.Write(p, 0, p.Length);
             stream.Close();
-        }
-
-        public bool isJson(string value)
-        {
-            try
-            {
-                JToken.Parse(value);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
         }
     }
 }

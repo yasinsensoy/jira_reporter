@@ -6,6 +6,8 @@ namespace jira_reporter
 {
     static class Program
     {
+        static MainForm frm;
+
         /// <summary>
         /// Uygulamanın ana girdi noktası.
         /// </summary>
@@ -20,16 +22,28 @@ namespace jira_reporter
             }
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+        exit:
             Config.instance.load();
             if (string.IsNullOrEmpty(JiraApi.auth))
             {
                 Application.Run(new LoginForm());
                 if (!string.IsNullOrEmpty(JiraApi.auth))
-                    Application.Run(new MainForm());
+                    RunMainForm();
             }
             else
-                Application.Run(new MainForm());
+                RunMainForm();
+            if (frm.exit)
+            {
+                Config.instance.clear();
+                goto exit;
+            }
             GC.KeepAlive(mutex);
+        }
+
+        static void RunMainForm()
+        {
+            frm = new MainForm();
+            Application.Run(frm);
         }
     }
 }
